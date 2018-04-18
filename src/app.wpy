@@ -1,0 +1,64 @@
+<style lang="less">
+.container {
+  height: 100%;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/question',
+      'pages/favorite'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: '奢侈品知多少',
+      navigationBarTextStyle: 'black'
+    },
+    // tabBar: {
+    //   selectedColor: '#2c2c2c',
+    //   list: [{
+    //     pagePath: 'pages/index',
+    //     iconPath: 'assets/home.png',
+    //     selectedIconPath: 'assets/home.png',
+    //     text: '闯关'
+    //   }, {
+    //     pagePath: 'pages/favorite',
+    //     iconPath: 'assets/contacts.png',
+    //     selectedIconPath: 'assets/contacts.png',
+    //     text: '收藏'
+    //   }]
+    // }
+  }
+
+  globalData = {
+    userInfo: null,
+    openId: ''
+  }
+
+  constructor () {
+    super()
+    this.use('promisify')
+    this.use('requestfix')
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success(res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>

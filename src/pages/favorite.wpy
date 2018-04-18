@@ -1,0 +1,185 @@
+<style lang="less">
+.container {
+  padding-bottom: 100rpx;
+}
+.fav-item {
+  position: relative;
+  width: 100%;
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+}
+.item-wrapper {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 40rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  box-shadow: 2rpx 2rpx 10rpx rgba(0, 0, 0, .1);
+  background: #fff;
+  transition: all .4s;
+  &.touchmove {
+    transform: translate3d(-220rpx, 0, 0);
+  }
+}
+.delete-btn {
+  position: absolute;
+  z-index: 1;
+  right: 80rpx;
+  width: 100rpx;
+  height: 100rpx;
+  top: 50%;
+  margin-top: -50rpx;
+  border-radius: 100rpx;
+  background: #EF4245 url('http://owxm09zmc.bkt.clouddn.com/icon_delete.svg') center center no-repeat;
+  background-size: 48rpx auto;
+}
+.fav-img {
+  width: 200rpx;
+  height: 160rpx;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+.fav-info {
+  flex: 1;
+  justify-content: center;
+  font-size: 32rpx;
+}
+.brand {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2rpx;
+}
+.desc {
+  display: block;
+  margin-top: 16rpx;
+}
+.home-btn {
+  position: fixed;
+  z-index: 3;
+  bottom: 40rpx;
+  right: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border: 8rpx solid #000;
+  border-radius: 100rpx;
+  background: #fff url('http://owxm09zmc.bkt.clouddn.com/icon_home.svg') center center no-repeat;
+  background-size: 48rpx auto;
+  box-shadow: 2rpx 2rpx 10rpx rgba(0, 0, 0, .1);
+}
+</style>
+<template>
+  <view class="container">
+    <repeat for="{{favorites}}" key="key" index="key" item="favorite">
+      <view class="fav-item" data-id="{{favorite.id}}" @tap="gotoPDP">
+        <view class="item-wrapper" :class="{'touchmove': favorite.isTouchMove}" data-id="{{favorite.id}}" @touchstart="touchstart" @touchmove="touchmove">
+          <view class="fav-img" style="background-image: url({{favorite.imgUrl}});" />
+          <view class="fav-info">
+            <text class="brand">{{favorite.brandName}}</text>
+            <text class="desc">{{favorite.description}}</text>
+          </view>
+        </view>
+        <view class="delete-btn" data-id="{{favorite.id}}" @tap="removeFavorite" />
+      </view>
+    </repeat>
+    <view class="home-btn" @tap="goHome" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants'
+
+  export default class Favorite extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的收藏'
+    }
+
+    data = {
+      favorites: [],
+      startX: 0
+    }
+
+    computed = {
+    }
+
+    methods = {
+      goHome() {
+        wepy.redirectTo({
+          url: 'index'
+        })
+      },
+      gotoPDP(e) {
+        const id = e.currentTarget.dataset.id
+        wepy.navigateToMiniProgram({
+          appId: 'wx2da05d17eb495af2',
+          path: `pages/product?id=${id}`,
+          envVersion: 'trial'
+        })
+      },
+      removeFavorite(e) {
+        const id = e.currentTarget.dataset.id
+        const openid = wepy.getStorageSync('openid')
+        wepy.request({
+          method: 'DELETE',
+          url: `${constants.API_HOST}/api/luxury/favorite?uid=${openid}&ffid=${id}`
+        }).then((resp) => {
+          if (resp.statusCode === 200) {
+            const data = resp.data
+            if (!data.code) {
+              this.favorites = this.favorites.filter((f) => f.id !== id)
+              this.$apply()
+            }
+          } else {
+            wepy.showToast({
+              title: resp.data.message
+            })
+          }
+        })
+      },
+      touchstart(e) {
+        const point = e.changedTouches[0]
+        this.startX = point.clientX
+        this.$apply()
+      },
+      touchmove(e) {
+        const id = e.currentTarget.dataset.id
+        const point = e.changedTouches[0];
+        const target = this.favorites.filter((f) => f.id === id)[0]
+        if (point.clientX - this.startX > 60) {
+          target.isTouchMove = false
+        } else if (point.clientX - this.startX < -60) {
+          target.isTouchMove = true
+          this.favorites.filter((f) => f.id !== id).map((f) => {
+            f.isTouchMove = false
+            return f
+          })
+        }
+        this.$apply()
+      }
+    }
+
+    onLoad() {
+      const that = this
+      const openid = wepy.getStorageSync('openid')
+      wepy.request({
+        url: `${constants.API_HOST}/api/luxury/favorites?uid=${openid}`
+      }).then((resp) => {
+        if (resp.statusCode === 200) {
+          const data = resp.data
+          this.favorites = data.map((f) => {
+            f.isTouchMove = false
+            return f
+          })
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: resp.data.message
+          })
+        }
+      })
+    }
+  }
+</script>

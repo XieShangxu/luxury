@@ -1,0 +1,303 @@
+<style lang="less">
+.container {
+  overflow-x: hidden;
+  padding-bottom: 40rpx;
+  .products-wrapper {
+    display: flex;
+    width: 5000%;
+    overflow-x: hidden;
+    transform: translate3d(0, 0, 0);
+    transition: transform 0.3s;
+  }
+  .product-item {
+    flex: 1;
+  }
+  .img-wrapper {
+    position: relative;
+    width: 90%;
+    height: 600rpx;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 40rpx auto;
+  }
+  .fav-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border: 2rpx solid #000;
+    border-radius: 80rpx;
+    background: url('http://owxm09zmc.bkt.clouddn.com/icon_unstar.svg') center center no-repeat;
+    background-size: 36rpx auto;
+    &.faved {
+      background-image: url('http://owxm09zmc.bkt.clouddn.com/icon_star.svg')
+    }
+  }
+  .gohome-btn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border: 2rpx solid #000;
+    border-radius: 80rpx;
+    background: url('http://owxm09zmc.bkt.clouddn.com/icon_home.svg') center center no-repeat;
+    background-size: 36rpx auto;
+  }
+  .options {
+    width: 100%;
+  }
+  .option-item {
+    width: 75%;
+    text-align: center;
+    padding: 20rpx 0;
+    margin: 20rpx auto 0;
+    border: 4rpx solid #000;
+    border-radius: 80rpx;
+    &.selected {
+      background: #000;
+      color: #fff;
+    }
+    &.correct {
+      border-color: #00BB29;
+      background: #00BB29;
+      color: #fff;
+    }
+    &.error {
+      border-color: #EF4245;
+      background: #EF4245;
+      color: #fff;
+    }
+  }
+  .result-popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .4);
+  }
+  .popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 480rpx;
+    padding: 120rpx 40rpx 40rpx;
+    text-align: center;
+    background-color: #f7f7f7;
+    border-radius: 40rpx;
+    box-shadow:0 0 20rpx rgba(0, 0, 0, .2);
+    transform: translate(-50%, -50%);
+  }
+  .top-icon {
+    position: absolute;
+    top: -40rpx;
+    left: 50%;
+    width: 80rpx;
+    height: 80rpx;
+    margin-left: -44rpx;
+    border: 8rpx solid #f7f7f7;
+    border-radius: 80rpx;
+    background: #eee url('http://owxm09zmc.bkt.clouddn.com/logo-luxury.png') center center no-repeat;
+    background-size: 48rpx auto;
+  }
+  .score-head {
+    width: 100%;
+    height: 100rpx;
+    margin: 20rpx 0;
+    background: url('http://owxm09zmc.bkt.clouddn.com/score_title.png') center center no-repeat;
+    background-size: auto 100rpx;
+  }
+  .score {
+    font-size: 96rpx;
+    font-weight: bold;
+  }
+  .btn-wrapper {
+    display: flex;
+    margin: 80rpx 0 40rpx;
+  }
+  .home-btn {
+    display: inline-block;
+    width: 80rpx;
+    height: 80rpx;
+    border: 4rpx solid #000;
+    border-radius: 100rpx;
+    background: url('http://owxm09zmc.bkt.clouddn.com/icon_home.svg') center center no-repeat;
+    background-size: 36rpx auto;
+  }
+  .restart-btn {
+    flex: 1;
+    height: 80rpx;
+    margin: 0 20rpx;
+    border: 4rpx solid #000;
+    border-radius: 100rpx;
+    background: url('http://owxm09zmc.bkt.clouddn.com/icon_restart.svg') center center no-repeat;
+    background-size: 36rpx auto;
+  }
+  .favorite-btn {
+    display: inline-block;
+    width: 80rpx;
+    height: 80rpx;
+    border: 4rpx solid #000;
+    border-radius: 100rpx;
+    background: url('http://owxm09zmc.bkt.clouddn.com/icon_star.svg') center center no-repeat;
+    background-size: 36rpx auto;
+  }
+  .record {
+    display: block;
+    margin-top: 30rpx;
+    font-size: 24rpx;
+    color: #777;
+  }
+}
+</style>
+<template>
+  <view class="container">
+    <view class="products-wrapper" style="width: {{count * 100}}%; transform: translate3d(-{{index * 100 / count}}%, 0, 0)">
+      <repeat for="{{products}}" key="key" index="key" item="p">
+        <view class="product-item">
+          <view class="img-wrapper" style="background-image: url({{p.imgUrl}})">
+            <view class="gohome-btn" @tap="goHome" />
+            <view wx:if="{{!p.isFavorited}}" class="fav-btn" data-id="{{p.id}}" @tap="addToFavor" />
+            <view wx:else class="fav-btn faved" />
+          </view>
+          <view class="options">
+            <repeat for="{{p.options}}" key="optionkey" index="optionkey" item="item">
+              <view
+                class="option-item"
+                :class="{'selected': selected[index] === item.id, 'correct': selected[index] && item.id === product.brandId, 'error': selected[index] && selected[index] == item.id && item.id !== product.brandId}"
+                data-bid="{{item.id}}"
+                @tap="choose(item)">
+                {{item.name}}
+              </view>
+            </repeat>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="result-popup" wx:if="{{finished}}">
+      <view class="popup-content">
+        <view class="top-icon" />
+        <view class="score-head" />
+        <text class="score">{{index}}</text>
+        <view class="btn-wrapper">
+          <view class="home-btn" @tap="goHome" />
+          <view class="restart-btn" @tap="restart" />
+          <view class="favorite-btn" @tap="goFavor" />
+        </view>
+        <text class="record">历史最高分：{{record}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants'
+
+  export default class Question extends wepy.page {
+    config = {
+      navigationBarTitleText: '闯关'
+    }
+
+    data = {
+      products: [],
+      index: 0,
+      record: 0,
+      selected: [],
+      finished: false,
+      count: 30
+    }
+
+    computed = {
+      product() {
+        return this.products[this.index]
+      }
+    }
+
+    methods = {
+      addToFavor(e) {
+        const id = e.currentTarget.dataset.id
+        const openid = wepy.getStorageSync('openid')
+        wepy.request({
+          method: 'POST',
+          url: `${constants.API_HOST}/api/luxury/favorite`,
+          data: {
+            uid: openid,
+            ffid: id
+          }
+        }).then((resp) => {
+          if (resp.statusCode === 200 && !resp.data.code) {
+            this.products[this.index].isFavorited = true
+            this.$apply()
+          }
+        })
+      },
+      choose(e) {
+        const that = this
+        const id = e.currentTarget.dataset.bid
+        this.selected.push(id)
+        this.$apply()
+        if (id === this.product.brandId) {
+          if (this.index === this.products.length - 1) {
+            this.finished = true
+          } else {
+            this.index++
+          }
+        } else {
+          this.finished = true
+        }
+
+        if (this.index >= wepy.getStorageSync('record')) {
+          wepy.setStorageSync('record', this.index)
+        }
+        this.record = wepy.getStorageSync('record')
+        this.$apply()
+      },
+      goHome() {
+        wepy.redirectTo({
+          url: 'index'
+        })
+      },
+      restart() {
+        wepy.redirectTo({
+          url: 'question'
+        })
+      },
+      goFavor() {
+        wepy.redirectTo({
+          url: 'favorite'
+        })
+      }
+    }
+
+    onShareAppMessage() {
+      const product = this.products[this.index]
+      return {
+        from: 'menu',
+        title: '奢侈品知多少',
+        imageUrl: product.imgUrl
+      }
+    }
+
+    onLoad() {
+      const that = this
+      const openid = wepy.getStorageSync('openid')
+      wepy.request({
+        url: `${constants.API_HOST}/api/luxury/products?uid=${openid}&count=${that.count}`
+      }).then((resp) => {
+        if (resp.statusCode === 200) {
+          const data = resp.data
+          this.products = data
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: resp.data.message
+          })
+        }
+      })
+    }
+  }
+</script>

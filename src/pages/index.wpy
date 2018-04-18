@@ -1,0 +1,96 @@
+<style lang="less">
+page {
+  background: #000;
+}
+.gif-banner {
+  display: block;
+  width: 100%;
+}
+.action-btn {
+  display: block;
+  width: 50%;
+  margin: 120rpx auto 0;
+  padding: 30rpx 0;
+  border-radius: 80rpx;
+  text-align: center;
+  color: #000;
+  background-color: #fff;
+
+  image {
+    width: 40rpx;
+    height: 40rpx;
+    margin-right: 20rpx;
+    vertical-align: -6rpx;
+  }
+}
+</style>
+<template>
+  <view class="container">
+    <!-- <button @tap="toDailyPost">跳转到Farfetch</button> -->
+    <image class="gif-banner" src="http://owxm09zmc.bkt.clouddn.com/simple_logo_dots.gif" />
+    <view class="action-btn start-btn" @tap="gotoQuestionPage">
+      <image src="http://owxm09zmc.bkt.clouddn.com/icon_play.svg" />开始闯关
+    </view>
+    <view class="action-btn favorite-btn" @tap="gotoFavoritePage">
+      <image src="http://owxm09zmc.bkt.clouddn.com/icon_star.svg" />我的收藏
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants.js'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '奢侈品知多少',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
+    }
+
+    data = {
+    }
+
+    computed = {
+    }
+
+    methods = {
+      // toDailyPost() {
+      //   wepy.navigateToMiniProgram({
+      //     appId: 'wx841be9d6025be4a1',
+      //     path: 'pages/articleDetail?id=b77fe272-8337-4904-962c-ed666bf6f6f0',
+      //     success: (result) => {
+      //       console.log(result)
+      //     }
+      //   })
+      // },
+      gotoQuestionPage() {
+        wepy.navigateTo({
+          url: 'question'
+        })
+      },
+      gotoFavoritePage() {
+        wepy.navigateTo({
+          url: 'favorite'
+        })
+      }
+    }
+
+    onShareAppMessage() {
+      return {
+        from: 'menu',
+        title: '奢侈品知多少'
+      }
+    }
+
+    async onLoad() {
+      const loginResp = await wepy.login()
+      const userResp = await wepy.request({
+        url: `https://api.weixin.qq.com/sns/jscode2session?appid=wx52a86f03326bcd21&secret=d2f25b20c3396acfd434eb2635e2e955&js_code=${loginResp.code}&grant_type=authorization_code`
+      })
+      const openid = userResp.data.openid
+      this.$parent.globalData.openId = openid
+      wepy.setStorageSync('openid', openid)
+    }
+  }
+</script>
