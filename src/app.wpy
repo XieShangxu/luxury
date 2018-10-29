@@ -21,6 +21,9 @@ export default class extends wepy.app {
       navigationBarTitleText: '奢侈品知多少',
       navigationBarTextStyle: 'black'
     },
+    navigateToMiniProgramAppIdList: [
+      'wxb3959dd9f45a8c2d'
+    ]
     // tabBar: {
     //   selectedColor: '#2c2c2c',
     //   list: [{

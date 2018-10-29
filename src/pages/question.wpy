@@ -169,7 +169,7 @@
                 class="option-item"
                 :class="{'selected': selected[index] === item.id, 'correct': selected[index] && item.id === product.brandId, 'error': selected[index] && selected[index] == item.id && item.id !== product.brandId}"
                 data-bid="{{item.id}}"
-                @tap="choose(item)">
+                @tap="choose">
                 {{item.name}}
               </view>
             </repeat>
@@ -249,19 +249,27 @@
         this.$apply()
         if (id === this.product.brandId) {
           if (this.index === this.products.length - 1) {
-            this.finished = true
+            setTimeout(() => {
+              this.finished = true
+            }, 1000);
           } else {
-            this.index++
+            setTimeout(() => {
+              this.index++
+            }, 1000);
           }
         } else {
-          this.finished = true
+          setTimeout(() => {
+            this.finished = true
+          }, 1000);
         }
 
-        if (this.index >= wepy.getStorageSync('record')) {
-          wepy.setStorageSync('record', this.index)
-        }
-        this.record = wepy.getStorageSync('record')
-        this.$apply()
+        setTimeout(() => {
+          if (this.index >= wepy.getStorageSync('record')) {
+            wepy.setStorageSync('record', this.index)
+          }
+          this.record = wepy.getStorageSync('record')
+          this.$apply()
+        }, 1000)
       },
       goHome() {
         wepy.redirectTo({
