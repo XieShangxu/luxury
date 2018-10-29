@@ -146,7 +146,7 @@
       },
       touchmove(e) {
         const id = e.currentTarget.dataset.id
-        const point = e.changedTouches[0];
+        const point = e.changedTouches[0]
         const target = this.favorites.filter((f) => f.id === id)[0]
         if (point.clientX - this.startX > 60) {
           target.isTouchMove = false
@@ -162,7 +162,6 @@
     }
 
     onLoad() {
-      const that = this
       const openid = wepy.getStorageSync('openid')
       wepy.request({
         url: `${constants.API_HOST}/api/luxury/favorites?uid=${openid}`

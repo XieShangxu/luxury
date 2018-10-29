@@ -236,7 +236,6 @@
         })
       },
       choose(e) {
-        const that = this
         const id = e.currentTarget.dataset.bid
         this.selected.push(id)
         this.$apply()

@@ -13,6 +13,9 @@ module.exports = {
   plugins: [
     'html'
   ],
+  globals: {
+    wx: true
+  },
   settings: {
     'html/html-extensions': ['.html', '.wpy']
   },
