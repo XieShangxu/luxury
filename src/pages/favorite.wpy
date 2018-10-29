@@ -73,8 +73,8 @@
 <template>
   <view class="container">
     <repeat for="{{favorites}}" key="key" index="key" item="favorite">
-      <view class="fav-item" data-id="{{favorite.id}}" @tap="gotoPDP">
-        <view class="item-wrapper" :class="{'touchmove': favorite.isTouchMove}" data-id="{{favorite.id}}" @touchstart="touchstart" @touchmove="touchmove">
+      <view class="fav-item" data-id="{{favorite.id}}">
+        <view class="item-wrapper" :class="{'touchmove': favorite.isTouchMove}" data-id="{{favorite.id}}" @touchstart="touchstart" @touchmove="touchmove" @tap="gotoPDP">
           <view class="fav-img" style="background-image: url({{favorite.imgUrl}});" />
           <view class="fav-info">
             <text class="brand">{{favorite.brandName}}</text>
@@ -114,9 +114,9 @@
       gotoPDP(e) {
         const id = e.currentTarget.dataset.id
         wepy.navigateToMiniProgram({
-          appId: 'wx2da05d17eb495af2',
-          path: `pages/product?id=${id}`,
-          envVersion: 'trial'
+          appId: 'wxb3959dd9f45a8c2d',
+          path: `pages/detail?productId=${id}`,
+          version: 'release'
         })
       },
       removeFavorite(e) {

@@ -161,7 +161,7 @@
           <view class="img-wrapper" style="background-image: url({{p.imgUrl}})">
             <view class="gohome-btn" @tap="goHome" />
             <view wx:if="{{!p.isFavorited}}" class="fav-btn" data-id="{{p.id}}" @tap="addToFavor" />
-            <view wx:else class="fav-btn faved" />
+            <view wx:else class="fav-btn faved" @tap="showHint" />
           </view>
           <view class="options">
             <repeat for="{{p.options}}" key="optionkey" index="optionkey" item="item">
@@ -232,7 +232,15 @@
           if (resp.statusCode === 200 && !resp.data.code) {
             this.products[this.index].isFavorited = true
             this.$apply()
+            wepy.showToast({
+              title: '收藏成功!'
+            })
           }
+        })
+      },
+      showHint() {
+        wepy.showToast({
+          title: '您已收藏此商品'
         })
       },
       choose(e) {
