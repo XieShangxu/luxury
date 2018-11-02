@@ -38,6 +38,7 @@ page {
 
 <script>
   import wepy from 'wepy'
+  import constants from '../utils/constants'
   import { getGUID } from '../utils/common'
 
   export default class Index extends wepy.page {
@@ -74,13 +75,17 @@ page {
     }
 
     async onLoad() {
-      const loginResp = await wepy.login()
-      const userResp = await wepy.request({
-        url: `https://api.weixin.qq.com/sns/jscode2session?appid=wx52a86f03326bcd21&secret=d2f25b20c3396acfd434eb2635e2e955&js_code=${loginResp.code}&grant_type=authorization_code`
-      })
-      const openid = (userResp && userResp.data) ? userResp.data.openid : getGUID()
-      this.$parent.globalData.openId = openid
-      wepy.setStorageSync('openid', openid)
+      const openid = wepy.getStorageSync('openid')
+      if (!openid) {
+        const loginResp = await wepy.login()
+        const userResp = await wepy.request({
+          method: 'GET',
+          url: `${constants.API_HOST}/api/auth/openid?code=${loginResp.code}`
+        })
+        const openid = (userResp && userResp.data) ? userResp.data.openid : getGUID()
+        this.$parent.globalData.openId = openid
+        wepy.setStorageSync('openid', openid)
+      }
     }
   }
 </script>
