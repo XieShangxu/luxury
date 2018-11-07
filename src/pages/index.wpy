@@ -38,8 +38,6 @@ page {
 
 <script>
   import wepy from 'wepy'
-  import constants from '../utils/constants'
-  import { getGUID } from '../utils/common'
 
   export default class Index extends wepy.page {
     config = {
@@ -74,18 +72,18 @@ page {
       }
     }
 
-    async onLoad() {
-      const openid = wepy.getStorageSync('openid')
-      if (!openid) {
-        const loginResp = await wepy.login()
-        const userResp = await wepy.request({
-          method: 'GET',
-          url: `${constants.API_HOST}/api/auth/openid?code=${loginResp.code}`
-        })
-        const openid = (userResp && userResp.data) ? userResp.data.openid : getGUID()
-        this.$parent.globalData.openId = openid
-        wepy.setStorageSync('openid', openid)
-      }
+    onLoad() {
+      // const openid = wepy.getStorageSync('openid')
+      // if (!openid) {
+      //   const loginResp = await wepy.login()
+      //   const userResp = await wepy.request({
+      //     method: 'GET',
+      //     url: `${constants.API_HOST}/api/auth/openid?code=${loginResp.code}`
+      //   })
+      //   const openid = (userResp && userResp.data) ? userResp.data.openid : getGUID()
+      //   this.$parent.globalData.openId = openid
+      //   wepy.setStorageSync('openid', openid)
+      // }
     }
   }
 </script>

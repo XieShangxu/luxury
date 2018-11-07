@@ -7,6 +7,8 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
+import constants from './utils/constants'
+import { getGUID } from './utils/common'
 
 export default class extends wepy.app {
   config = {
@@ -51,17 +53,17 @@ export default class extends wepy.app {
     this.use('requestfix')
   }
 
-  getUserInfo(cb) {
-    const that = this
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo
+  async onLaunch() {
+    const openid = wepy.getStorageSync('openid')
+    if (!openid) {
+      const loginResp = await wepy.login()
+      const userResp = await wepy.request({
+        method: 'GET',
+        url: `${constants.API_HOST}/api/auth/openid?code=${loginResp.code}`
+      })
+      const openid = (userResp && userResp.data) ? userResp.data.openid : getGUID()
+      wepy.setStorageSync('openid', openid)
     }
-    wepy.getUserInfo({
-      success(res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
-      }
-    })
   }
 }
 </script>
