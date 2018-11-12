@@ -26,12 +26,12 @@ page {
 </style>
 <template>
   <view class="container">
-    <image class="gif-banner" src="http://owxm09zmc.bkt.clouddn.com/simple_logo_dots.gif" />
+    <image class="gif-banner" src="http://ff-image.danielxie.cn/simple_logo_dots.gif" />
     <view class="action-btn start-btn" @tap="gotoQuestionPage">
-      <image src="http://owxm09zmc.bkt.clouddn.com/icon_play.svg" />开始闯关
+      <image src="http://ff-image.danielxie.cn/icon_play.svg" />开始闯关
     </view>
     <view class="action-btn favorite-btn" @tap="gotoFavoritePage">
-      <image src="http://owxm09zmc.bkt.clouddn.com/icon_star.svg" />我的收藏
+      <image src="http://ff-image.danielxie.cn/icon_star.svg" />我的收藏
     </view>
   </view>
 </template>

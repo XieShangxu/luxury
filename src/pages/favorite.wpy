@@ -32,7 +32,7 @@
   top: 50%;
   margin-top: -50rpx;
   border-radius: 100rpx;
-  background: #EF4245 url('http://owxm09zmc.bkt.clouddn.com/icon_delete.svg') center center no-repeat;
+  background: #EF4245 url('http://ff-image.danielxie.cn/icon_delete.svg') center center no-repeat;
   background-size: 48rpx auto;
 }
 .fav-img {
@@ -65,7 +65,7 @@
   height: 100rpx;
   border: 8rpx solid #000;
   border-radius: 100rpx;
-  background: #fff url('http://owxm09zmc.bkt.clouddn.com/icon_home.svg') center center no-repeat;
+  background: #fff url('http://ff-image.danielxie.cn/icon_home.svg') center center no-repeat;
   background-size: 48rpx auto;
   box-shadow: 2rpx 2rpx 10rpx rgba(0, 0, 0, .1);
 }
