@@ -67,8 +67,7 @@ page {
 
     onShareAppMessage() {
       return {
-        from: 'menu',
-        title: '奢侈品知多少'
+        title: '包包品牌大竞猜，等你来挑战!'
       }
     }
 

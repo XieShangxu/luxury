@@ -35,6 +35,17 @@
       background-image: url('http://ff-image.danielxie.cn/icon_star.svg')
     }
   }
+  .share-btn {
+    position: absolute;
+    right: 100rpx;
+    top: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border: 2rpx solid #000;
+    border-radius: 80rpx;
+    background: url('http://ff-image.danielxie.cn/icon_share.svg') center center no-repeat;
+    background-size: 32rpx auto;
+  }
   .gohome-btn {
     position: absolute;
     left: 0;
@@ -136,14 +147,14 @@
     background: url('http://ff-image.danielxie.cn/icon_restart.svg') center center no-repeat;
     background-size: 36rpx auto;
   }
-  .favorite-btn {
+  .popshare-btn {
     display: inline-block;
     width: 80rpx;
     height: 80rpx;
     border: 4rpx solid #000;
     border-radius: 100rpx;
-    background: url('http://ff-image.danielxie.cn/icon_star.svg') center center no-repeat;
-    background-size: 36rpx auto;
+    background: url('http://ff-image.danielxie.cn/icon_share.svg') center center no-repeat;
+    background-size: 32rpx auto;
   }
   .record {
     display: block;
@@ -160,6 +171,7 @@
         <view class="product-item">
           <view class="img-wrapper" style="background-image: url({{p.imgUrl}})">
             <view class="gohome-btn" @tap="goHome" />
+            <button class="share-btn" open-type="share" />
             <view wx:if="{{!p.isFavorited}}" class="fav-btn" data-id="{{p.id}}" @tap="addToFavor" />
             <view wx:else class="fav-btn faved" @tap="showHint" />
           </view>
@@ -185,7 +197,7 @@
         <view class="btn-wrapper">
           <view class="home-btn" @tap="goHome" />
           <view class="restart-btn" @tap="restart" />
-          <view class="favorite-btn" @tap="goFavor" />
+          <button class="popshare-btn" open-type="share" />
         </view>
         <text class="record">历史最高分：{{record}}</text>
       </view>
@@ -290,10 +302,19 @@
 
     onShareAppMessage() {
       const product = this.products[this.index]
-      return {
-        from: 'menu',
-        title: '奢侈品知多少',
-        imageUrl: product.imgUrl
+      const isFinished = this.finished
+      if (!isFinished) {
+        return {
+          title: '时尚达人，来看看你认不认识这款包包?',
+          imageUrl: product.imgUrl,
+          path: `pages/single?productId=${product.id}`
+        }
+      } else {
+        return {
+          title: `我猜中了${this.record}个包，等你来挑战!`,
+          imageUrl: product.imgUrl,
+          path: 'pages/index'
+        }
       }
     }
 

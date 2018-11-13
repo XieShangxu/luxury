@@ -161,6 +161,12 @@
       }
     }
 
+    onShareAppMessage() {
+      return {
+        title: '包包品牌大竞猜，等你来挑战！'
+      }
+    }
+
     onLoad() {
       const openid = wepy.getStorageSync('openid')
       wepy.request({

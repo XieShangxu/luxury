@@ -15,7 +15,8 @@ export default class extends wepy.app {
     pages: [
       'pages/index',
       'pages/question',
-      'pages/favorite'
+      'pages/favorite',
+      'pages/single'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -26,20 +27,6 @@ export default class extends wepy.app {
     navigateToMiniProgramAppIdList: [
       'wxb3959dd9f45a8c2d'
     ]
-    // tabBar: {
-    //   selectedColor: '#2c2c2c',
-    //   list: [{
-    //     pagePath: 'pages/index',
-    //     iconPath: 'assets/home.png',
-    //     selectedIconPath: 'assets/home.png',
-    //     text: '闯关'
-    //   }, {
-    //     pagePath: 'pages/favorite',
-    //     iconPath: 'assets/contacts.png',
-    //     selectedIconPath: 'assets/contacts.png',
-    //     text: '收藏'
-    //   }]
-    // }
   }
 
   globalData = {

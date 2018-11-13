@@ -1,0 +1,224 @@
+<style lang="less">
+.container {
+  overflow-x: hidden;
+  padding-bottom: 40rpx;
+  .products-wrapper {
+    width: 100%;
+  }
+  .img-wrapper {
+    position: relative;
+    width: 90%;
+    height: 600rpx;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 40rpx auto;
+  }
+  .share-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border: 2rpx solid #000;
+    border-radius: 80rpx;
+    background: url('http://ff-image.danielxie.cn/icon_share.svg') center center no-repeat;
+    background-size: 32rpx auto;
+  }
+  .gohome-btn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border: 2rpx solid #000;
+    border-radius: 80rpx;
+    background: url('http://ff-image.danielxie.cn/icon_home.svg') center center no-repeat;
+    background-size: 36rpx auto;
+  }
+  .options {
+    width: 100%;
+  }
+  .option-item {
+    width: 75%;
+    text-align: center;
+    padding: 20rpx 0;
+    margin: 20rpx auto 0;
+    border: 4rpx solid #000;
+    border-radius: 80rpx;
+    &.selected {
+      background: #000;
+      color: #fff;
+    }
+    &.correct {
+      border-color: #00BB29;
+      background: #00BB29;
+      color: #fff;
+    }
+    &.error {
+      border-color: #EF4245;
+      background: #EF4245;
+      color: #fff;
+    }
+  }
+  .result-popup {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .4);
+  }
+  .popup-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 480rpx;
+    padding: 120rpx 40rpx 40rpx;
+    text-align: center;
+    background-color: #f7f7f7;
+    border-radius: 40rpx;
+    box-shadow:0 0 20rpx rgba(0, 0, 0, .2);
+    transform: translate(-50%, -50%);
+  }
+  .top-icon {
+    position: absolute;
+    top: -40rpx;
+    left: 50%;
+    width: 80rpx;
+    height: 80rpx;
+    margin-left: -44rpx;
+    border: 8rpx solid #f7f7f7;
+    border-radius: 80rpx;
+    background: #eee url('http://ff-image.danielxie.cn/logo-luxury.png') center center no-repeat;
+    background-size: 48rpx auto;
+  }
+  .score {
+    font-size: 48rpx;
+    font-weight: bold;
+  }
+  .btn-wrapper {
+    display: flex;
+    margin: 80rpx 0 40rpx;
+  }
+  .restart-btn {
+    flex: 1;
+    height: 80rpx;
+    margin: 0 20rpx;
+    border: 4rpx solid #000;
+    border-radius: 100rpx;
+    line-height: 72rpx;
+  }
+}
+</style>
+<template>
+  <view class="container">
+    <view wx:if="product.id" class="products-wrapper">
+      <view class="product-item">
+        <view class="img-wrapper" style="background-image: url({{product.imgUrl}})">
+          <view class="gohome-btn" @tap="goHome" />
+          <button class="share-btn" open-type="share" />
+        </view>
+        <view class="options">
+          <repeat for="{{product.options}}" key="optionkey" index="optionkey" item="item">
+            <view
+              class="option-item"
+              :class="{'selected': selected === item.id, 'correct': selected && item.id === product.brandId, 'error': selected && selected == item.id && item.id !== product.brandId}"
+              data-bid="{{item.id}}"
+              @tap="choose">
+              {{item.name}}
+            </view>
+          </repeat>
+        </view>
+      </view>
+    </view>
+    <view class="result-popup" wx:if="{{finished}}">
+      <view class="popup-content">
+        <view class="top-icon" />
+        <text wx:if="{{correct}}" class="score">果然名不虚传</text>
+        <text wx:else class="score">不小心手滑了？</text>
+        <view class="btn-wrapper">
+          <button class="restart-btn" @tap="restart">挑战更多</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants'
+
+  export default class Single extends wepy.page {
+    config = {
+      navigationBarTitleText: '猜品牌'
+    }
+
+    data = {
+      product: {},
+      selected: '',
+      finished: false,
+      correct: false
+    }
+
+    computed = {
+    }
+
+    methods = {
+      choose(e) {
+        const id = e.currentTarget.dataset.bid
+        this.selected = id
+        this.$apply()
+        if (id === this.product.brandId) {
+          setTimeout(() => {
+            this.finished = true
+            this.correct = true
+            this.$apply()
+          }, 300)
+        } else {
+          setTimeout(() => {
+            this.finished = true
+            this.$apply()
+          }, 300)
+        }
+      },
+      goHome() {
+        wepy.redirectTo({
+          url: 'index'
+        })
+      },
+      restart() {
+        wepy.redirectTo({
+          url: 'question'
+        })
+      }
+    }
+
+    onShareAppMessage() {
+      const product = this.product
+      return {
+        title: '时尚达人，来看看你认不认识这款包包?',
+        imageUrl: product.imgUrl
+      }
+    }
+
+    onLoad() {
+      const pages = getCurrentPages()
+      const options = pages[pages.length - 1].options
+      const { productId } = options
+      wepy.request({
+        url: `${constants.API_HOST}/api/luxury/product/${productId}`
+      }).then((resp) => {
+        if (resp.statusCode === 200) {
+          const data = resp.data
+          this.product = data[0]
+          this.$apply()
+        } else {
+          wepy.showToast({
+            title: resp.data.message
+          })
+        }
+      })
+    }
+  }
+</script>
