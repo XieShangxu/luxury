@@ -67,7 +67,8 @@ page {
 
     onShareAppMessage() {
       return {
-        title: '包包品牌大竞猜，等你来挑战!'
+        title: '包包品牌大竞猜，等你来挑战!',
+        imageUrl: 'http://ff-image.danielxie.cn/share_home.jpg'
       }
     }
 
