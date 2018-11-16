@@ -12,12 +12,19 @@
   .product-item {
     flex: 1;
   }
+  .header-section {
+    position: absolute;
+    z-index: 2;
+    top: 40rpx;
+    left: 5%;
+    right: 5%;
+  }
   .img-wrapper {
     position: relative;
     width: 90%;
     height: 600rpx;
-    background-position: center center;
-    background-size: contain;
+    background-position: center 72rpx;
+    background-size: auto 528rpx;
     background-repeat: no-repeat;
     margin: 40rpx auto;
   }
@@ -39,12 +46,12 @@
     position: absolute;
     right: 100rpx;
     top: 0;
-    width: 64rpx;
-    height: 64rpx;
+    width: 68rpx;
+    height: 68rpx;
     border: 2rpx solid #000;
     border-radius: 80rpx;
     background: url('http://ff-image.danielxie.cn/icon_share.svg') center center no-repeat;
-    background-size: 32rpx auto;
+    background-size: 36rpx auto;
   }
   .gohome-btn {
     position: absolute;
@@ -56,6 +63,17 @@
     border-radius: 80rpx;
     background: url('http://ff-image.danielxie.cn/icon_home.svg') center center no-repeat;
     background-size: 36rpx auto;
+  }
+  .score-view {
+    position: absolute;
+    left: 100rpx;
+    top: 0;
+    width: 64rpx;
+    height: 64rpx;
+    border: 2rpx solid #000;
+    border-radius: 80rpx;
+    line-height: 64rpx;
+    text-align: center;
   }
   .options {
     width: 100%;
@@ -149,12 +167,12 @@
   }
   .popshare-btn {
     display: inline-block;
-    width: 80rpx;
-    height: 80rpx;
+    width: 88rpx;
+    height: 88rpx;
     border: 4rpx solid #000;
     border-radius: 100rpx;
     background: url('http://ff-image.danielxie.cn/icon_share.svg') center center no-repeat;
-    background-size: 32rpx auto;
+    background-size: 36rpx auto;
   }
   .record {
     display: block;
@@ -166,15 +184,19 @@
 </style>
 <template>
   <view class="container">
+    <view class="header-section">
+      <view class="gohome-btn" @tap="goHome" />
+      <view class="score-view">
+        <text>{{index}}</text>
+      </view>
+      <button class="share-btn" open-type="share" />
+      <view wx:if="{{!p.isFavorited}}" class="fav-btn" data-id="{{p.id}}" @tap="addToFavor" />
+      <view wx:else class="fav-btn faved" @tap="showHint" />
+    </view>
     <view class="products-wrapper" style="width: {{count * 100}}%; transform: translate3d(-{{index * 100 / count}}%, 0, 0)">
       <repeat for="{{products}}" key="key" index="key" item="p">
         <view class="product-item">
-          <view class="img-wrapper" style="background-image: url({{p.imgUrl}})">
-            <view class="gohome-btn" @tap="goHome" />
-            <button class="share-btn" open-type="share" />
-            <view wx:if="{{!p.isFavorited}}" class="fav-btn" data-id="{{p.id}}" @tap="addToFavor" />
-            <view wx:else class="fav-btn faved" @tap="showHint" />
-          </view>
+          <view class="img-wrapper" style="background-image: url({{p.imgUrl}})"></view>
           <view class="options">
             <repeat for="{{p.options}}" key="optionkey" index="optionkey" item="item">
               <view
@@ -311,7 +333,7 @@
         }
       } else {
         return {
-          title: `我猜中了${this.record}个包，等你来挑战!`,
+          title: `我猜中了${this.index}个包，等你来挑战!`,
           imageUrl: product.imgUrl,
           path: 'pages/index'
         }
