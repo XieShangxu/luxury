@@ -23,16 +23,24 @@ image {
   width: 100%;
 }
 .recommands {
+  width: 100%;
+  overflow: hidden;
+}
+.item-list {
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
+}
+.item-wrapper {
+  margin-right: 20rpx;
 }
 .recom-item {
-  width: 50%;
-  padding-top: 50%;
-  margin: 10rpx 0;
+  width: 320rpx;
+  height: 320rpx;
+  background-blend-mode: multiply;
+  background-position: center;
   background-repeat: no-repeat;
-  background-size: 60%;
-  background-position: center center;
+  background-color: #F5F5F5;
+  background-size: auto 80%;
 }
 .video-wrapper {
   position: relative;
@@ -71,11 +79,15 @@ video {
         <view wx:if="{{item.type==='video'}}" class="video-wrapper" style="padding-top:{{item.ratio}}">
           <video src="{{item.src}}" controls="{{false}}" autoplay loop></video>
         </view>
-        <view wx:if="{{item.type==='cards'}}" class="recommands">
-          <repeat for="{{item.items}}" key="index" index="index" item="product">
-            <view class="recom-item" style="background-image: url({{product.url}})" @tap="gotoPDP('{{product.id}}')"></view>
-          </repeat>
-        </view>
+        <scroll-view wx:if="{{item.type==='cards'}}" scroll-x="true" class="recommands">
+          <view class="item-list">
+            <repeat for="{{item.items}}" key="index" index="index" item="product">
+              <view class="item-wrapper">
+                <view class="recom-item" style="background-image: url({{product.url}})" @tap="gotoPDP('{{product.id}}')"></view>
+              </view>
+            </repeat>
+          </view>
+        </scroll-view>
       </repeat>
       <view class="brand-entry" @tap="gotoPLP">更多该品牌商品</view>
     </view>
