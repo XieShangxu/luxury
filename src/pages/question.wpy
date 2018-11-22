@@ -16,8 +16,8 @@
     position: absolute;
     z-index: 2;
     top: 40rpx;
-    left: 5%;
-    right: 5%;
+    left: 48rpx;
+    right: 48rpx;
   }
   .img-wrapper {
     position: relative;
@@ -74,6 +74,28 @@
     border-radius: 80rpx;
     line-height: 64rpx;
     text-align: center;
+  }
+  .fav-hint {
+    display: flex;
+    position: absolute;
+    top: 70rpx;
+    right: -48rpx;
+    width: 638rpx;
+    height: 112rpx;
+    padding: 70rpx 56rpx 90rpx;
+    align-items: center;
+    background: url('http://ff-image.danielxie.cn/tip-bg.svg') center top no-repeat;
+    background-size: 100%;
+    .fav-text {
+      flex: 1;
+      padding-left: 50rpx;
+    }
+    .hint-close {
+      width: 100rpx;
+      height: 100rpx;
+      background: url('http://ff-image.danielxie.cn/icon_close_black.svg') center no-repeat;
+      background-size: 28rpx;
+    }
   }
   .options {
     width: 100%;
@@ -190,8 +212,12 @@
         <text>{{index}}</text>
       </view>
       <button class="share-btn" open-type="share" />
-      <view wx:if="{{!p.isFavorited}}" class="fav-btn" data-id="{{p.id}}" @tap="addToFavor" />
+      <view wx:if="{{!product.isFavorited}}" class="fav-btn" data-id="{{product.id}}" @tap="addToFavor" />
       <view wx:else class="fav-btn faved" @tap="showHint" />
+      <view wx:if="{{!hideFavHint}}" class="fav-hint">
+        <view class="fav-text">点这里，喜欢的包包先收藏</view>
+        <view class="hint-close" @tap="closeFavHint"></view>
+      </view>
     </view>
     <view class="products-wrapper" style="width: {{count * 100}}%; transform: translate3d(-{{index * 100 / count}}%, 0, 0)">
       <repeat for="{{products}}" key="key" index="key" item="p">
@@ -242,7 +268,8 @@
       record: 0,
       selected: [],
       finished: false,
-      count: 30
+      count: 30,
+      hideFavHint: true
     }
 
     computed = {
@@ -271,6 +298,11 @@
             })
           }
         })
+      },
+      closeFavHint() {
+        this.hideFavHint = true
+        wepy.setStorageSync('hideFavHint', true)
+        this.$apply()
       },
       showHint() {
         wepy.showToast({
@@ -343,12 +375,14 @@
     onLoad() {
       const that = this
       const openid = wepy.getStorageSync('openid')
+      const hideFavHint = wepy.getStorageSync('hideFavHint')
       wepy.request({
         url: `${constants.API_HOST}/api/luxury/products?uid=${openid}&count=${that.count}`
       }).then((resp) => {
         if (resp.statusCode === 200) {
           const data = resp.data
           this.products = data
+          this.hideFavHint = !!hideFavHint
           this.$apply()
         } else {
           wepy.showToast({

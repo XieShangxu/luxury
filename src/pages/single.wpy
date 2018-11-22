@@ -14,6 +14,13 @@
     background-repeat: no-repeat;
     margin: 40rpx auto;
   }
+  .header-section {
+    position: absolute;
+    z-index: 2;
+    top: 40rpx;
+    left: 48rpx;
+    right: 48rpx;
+  }
   .share-btn {
     position: absolute;
     right: 0;
@@ -113,12 +120,13 @@
 </style>
 <template>
   <view class="container">
+    <view class="header-section">
+      <view class="gohome-btn" @tap="goHome" />
+      <button class="share-btn" open-type="share" />
+    </view>
     <view wx:if="product.id" class="products-wrapper">
       <view class="product-item">
-        <view class="img-wrapper" style="background-image: url({{product.imgUrl}})">
-          <view class="gohome-btn" @tap="goHome" />
-          <button class="share-btn" open-type="share" />
-        </view>
+        <view class="img-wrapper" style="background-image: url({{product.imgUrl}})"></view>
         <view class="options">
           <repeat for="{{product.options}}" key="optionkey" index="optionkey" item="item">
             <view

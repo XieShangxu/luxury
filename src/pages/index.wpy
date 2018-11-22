@@ -9,8 +9,8 @@ page {
 .action-btn {
   display: block;
   width: 50%;
-  margin: 120rpx auto 0;
-  padding: 30rpx 0;
+  margin: 80rpx auto 0;
+  padding: 28rpx 0;
   border-radius: 80rpx;
   text-align: center;
   color: #000;
@@ -32,6 +32,9 @@ page {
     </view>
     <view class="action-btn favorite-btn" @tap="gotoFavoritePage">
       <image src="http://ff-image.danielxie.cn/icon_star.svg" />我的收藏
+    </view>
+    <view class="action-btn story-btn" @tap="gotoBrandStoryPage">
+      <image src="http://ff-image.danielxie.cn/bookmark.svg" />今日品牌
     </view>
   </view>
 </template>
@@ -61,6 +64,11 @@ page {
       gotoFavoritePage() {
         wepy.navigateTo({
           url: 'favorite'
+        })
+      },
+      gotoBrandStoryPage() {
+        wepy.navigateTo({
+          url: 'story'
         })
       }
     }

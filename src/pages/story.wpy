@@ -1,0 +1,146 @@
+<style lang="less">
+.loading {
+  height: 800rpx;
+  background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
+  background-size: 64rpx auto;
+}
+.story-wrapper {
+  padding: 48rpx 0;
+}
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 48rpx;
+  text-transform: uppercase;
+}
+.text {
+  font-size: 32rpx;
+  text-indent: 64rpx;
+  padding: 48rpx;
+}
+image {
+  width: 100%;
+}
+.recommands {
+  display: flex;
+  flex-wrap: wrap;
+}
+.recom-item {
+  width: 50%;
+  padding-top: 50%;
+  margin: 10rpx 0;
+  background-repeat: no-repeat;
+  background-size: 60%;
+  background-position: center center;
+}
+.video-wrapper {
+  position: relative;
+  padding-top: 100%;
+}
+video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.brand-entry {
+  margin: 48rpx;
+  text-align: center;
+  line-height: 100rpx;
+  letter-spacing: 4rpx;
+  font-size: 32rpx;
+  border: 1rpx solid #000;
+  border-radius: 8rpx;
+  color: #fff;
+  background: #000;
+  font-weight: bold;
+}
+</style>
+<template>
+  <view class="container">
+    <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="story-wrapper">
+      <view class="title">{{ story.name }}</view>
+      <repeat for="{{story.description}}" index="index" key="index" item="item">
+        <view wx:if="{{item.type==='text'}}" class="text">{{item.content}}</view>
+        <view wx:if="{{item.type==='image'}}">
+          <image src="{{item.src}}" mode="widthFix" lazy-load></image>
+        </view>
+        <view wx:if="{{item.type==='video'}}" class="video-wrapper" style="padding-top:{{item.ratio}}">
+          <video src="{{item.src}}" controls="{{false}}" autoplay loop></video>
+        </view>
+        <view wx:if="{{item.type==='cards'}}" class="recommands">
+          <repeat for="{{item.items}}" key="index" index="index" item="product">
+            <view class="recom-item" style="background-image: url({{product.url}})" @tap="gotoPDP('{{product.id}}')"></view>
+          </repeat>
+        </view>
+      </repeat>
+      <view class="brand-entry" @tap="gotoPLP">更多该品牌商品</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants'
+
+  export default class Story extends wepy.page {
+    config = {
+      navigationBarTitleText: '品牌故事',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
+    }
+
+    data = {
+      showSpinner: true,
+      story: {}
+    }
+
+    computed = {
+    }
+
+    methods = {
+      gotoPDP(id) {
+        wepy.navigateToMiniProgram({
+          appId: 'wxb3959dd9f45a8c2d',
+          path: `pages/detail?productId=${id}&_source_=brandstory`,
+          version: 'release'
+        })
+      },
+      gotoPLP() {
+        wepy.navigateToMiniProgram({
+          appId: 'wxb3959dd9f45a8c2d',
+          path: `pages/productlist?gender=women&brand=${this.story.bid}&_source_=brandstory`,
+          version: 'release'
+        })
+      }
+    }
+
+    onShareAppMessage() {
+      return {
+        title: `${this.story.name}，值得你种草的小众品牌！`,
+        imageUrl: `${this.story.products[0].url}`
+      }
+    }
+
+    onLoad() {
+      const pages = getCurrentPages()
+      const options = pages[pages.length - 1].options
+      const { brandId } = options
+      let requestUrl = `${constants.API_HOST}/api/ffcontent/daily/story`
+
+      if (brandId) {
+        requestUrl = `${constants.API_HOST}/api/ffcontent/story/${brandId}`
+      }
+      wepy.request({
+        url: requestUrl
+      }).then((resp) => {
+        this.story = resp.data
+        this.showSpinner = false
+        this.$apply()
+      })
+    }
+  }
+</script>
