@@ -2,6 +2,11 @@
 .container {
   padding-bottom: 100rpx;
 }
+.loading {
+  height: 800rpx;
+  background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
+  background-size: 64rpx auto;
+}
 .fav-item {
   position: relative;
   width: 100%;
@@ -72,18 +77,21 @@
 </style>
 <template>
   <view class="container">
-    <repeat for="{{favorites}}" key="key" index="key" item="favorite">
-      <view class="fav-item" data-id="{{favorite.id}}">
-        <view class="item-wrapper" :class="{'touchmove': favorite.isTouchMove}" data-id="{{favorite.id}}" @touchstart="touchstart" @touchmove="touchmove" @tap="gotoPDP">
-          <view class="fav-img" style="background-image: url({{favorite.imgUrl}});" />
-          <view class="fav-info">
-            <text class="brand">{{favorite.brandName}}</text>
-            <text class="desc">{{favorite.description}}</text>
+    <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="fav-wrapper">
+      <repeat for="{{favorites}}" key="key" index="key" item="favorite">
+        <view class="fav-item" data-id="{{favorite.id}}">
+          <view class="item-wrapper" :class="{'touchmove': favorite.isTouchMove}" data-id="{{favorite.id}}" @touchstart="touchstart" @touchmove="touchmove" @tap="gotoPDP">
+            <view class="fav-img" style="background-image: url({{favorite.imgUrl}});" />
+            <view class="fav-info">
+              <text class="brand">{{favorite.brandName}}</text>
+              <text class="desc">{{favorite.description}}</text>
+            </view>
           </view>
+          <view class="delete-btn" data-id="{{favorite.id}}" @tap="removeFavorite" />
         </view>
-        <view class="delete-btn" data-id="{{favorite.id}}" @tap="removeFavorite" />
-      </view>
-    </repeat>
+      </repeat>
+    </view>
     <view class="home-btn" @tap="goHome" />
   </view>
 </template>
@@ -94,10 +102,13 @@
 
   export default class Favorite extends wepy.page {
     config = {
-      navigationBarTitleText: '我的收藏'
+      navigationBarTitleText: '我的收藏',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
     }
 
     data = {
+      showSpinner: true,
       favorites: [],
       startX: 0
     }
@@ -115,7 +126,7 @@
         const id = e.currentTarget.dataset.id
         wepy.navigateToMiniProgram({
           appId: 'wxb3959dd9f45a8c2d',
-          path: `pages/detail?productId=${id}&_source_=guessbrand`,
+          path: `pages/detail?productId=${id}&_source_=zds_favorite`,
           version: 'release'
         })
       },
@@ -172,18 +183,19 @@
       wepy.request({
         url: `${constants.API_HOST}/api/luxury/favorites?uid=${openid}`
       }).then((resp) => {
+        this.showSpinner = false
         if (resp.statusCode === 200) {
           const data = resp.data
           this.favorites = data.map((f) => {
             f.isTouchMove = false
             return f
           })
-          this.$apply()
         } else {
           wepy.showToast({
             title: resp.data.message
           })
         }
+        this.$apply()
       })
     }
   }

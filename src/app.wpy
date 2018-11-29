@@ -17,7 +17,11 @@ export default class extends wepy.app {
       'pages/question',
       'pages/favorite',
       'pages/single',
-      'pages/story'
+      'pages/story',
+      'pages/profile',
+      'pages/fragment',
+      'pages/battle',
+      'pages/battleresult'
     ],
     window: {
       backgroundTextStyle: 'light',

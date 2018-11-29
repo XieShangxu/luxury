@@ -1,0 +1,156 @@
+<style lang="less">
+.loading {
+  height: 800rpx;
+  background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
+  background-size: 64rpx auto;
+}
+.profile-wrapper {
+  padding-bottom: 80rpx;
+}
+.profile-header {
+  padding-top: 80rpx;
+  background: #000;
+}
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 auto;
+  border: 12rpx solid #fff;
+  border-radius: 50%;
+  background: #ddd url('http://ff-image.danielxie.cn/logo-luxury.png') center center no-repeat;
+  background-size: 48rpx;
+}
+.level-text {
+  padding-top: 40rpx;
+  font-size: 28rpx;
+  color: #fff;
+  background: #000;
+}
+.numbers {
+  display: flex;
+  background: #000;
+}
+.number-item {
+  flex: 1;
+  padding: 60rpx 0 48rpx;
+  color: #fff;
+  .number-detail {
+    font-size: 36rpx;
+  }
+  .number-label {
+    font-size: 24rpx;
+    color: #eee;
+  }
+}
+.profile-details {
+  padding-top: 40rpx;
+}
+.detail-line {
+  padding: 36rpx 48rpx 36rpx 180rpx;
+  margin: 0 48rpx 48rpx;
+  font-size: 32rpx;
+  border: 8rpx solid #000;
+  box-shadow: 8rpx 8rpx 0 1rpx #000;
+  background-repeat: no-repeat;
+  background-size: 40rpx auto;
+  background-position: 70rpx center;
+  &.battle {
+    background-image: url('http://ff-image.danielxie.cn/icon_zj.svg');
+  }
+  &.fragment {
+    background-image: url('http://ff-image.danielxie.cn/icon_fragment.svg');
+  }
+  &.favorite {
+    background-image: url('http://ff-image.danielxie.cn/icon_star.svg');
+  }
+}
+.center-block {
+  display: block;
+  text-align: center;
+}
+</style>
+<template>
+  <view class="container">
+    <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="profile-wrapper">
+      <view class="profile-header">
+        <view class="avatar"></view>
+        <text class="level-text center-block">{{userLevel}}</text>
+      </view>
+      <view class="numbers">
+        <view class="number-item">
+          <text class="number-detail center-block">{{profile.fragment || 0}}</text>
+          <text class="number-label center-block">碎片</text>
+        </view>
+        <view class="number-item">
+          <text class="number-detail center-block">{{winrate}}%</text>
+          <text class="number-label center-block">胜率</text>
+        </view>
+      </view>
+      <view class="profile-details">
+        <view class="detail-line battle" @tap="gotoPage('battleresult')">我的战绩</view>
+        <view class="detail-line fragment" @tap="gotoPage('fragment')">我的碎片</view>
+        <view class="detail-line favorite" @tap="gotoPage('favorite')">我的收藏</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants'
+  import { getUserLevel } from '../utils/level'
+
+  export default class Profile extends wepy.page {
+    config = {
+      navigationBarTitleText: '个人主页',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
+    }
+
+    data = {
+      showSpinner: true,
+      profile: {}
+    }
+
+    computed = {
+      userLevel() {
+        const { fragment, win } = this.profile
+        return getUserLevel(fragment, win)
+      },
+      winrate() {
+        const { win, total } = this.profile
+        if (win) {
+          return Math.round(win / total * 100) / 100
+        }
+        return 0
+      }
+    }
+
+    methods = {
+      gotoPage(page) {
+        wepy.navigateTo({
+          url: page
+        })
+      }
+    }
+
+    onLoad() {
+      const openid = wepy.getStorageSync('openid')
+      wepy.request({
+        url: `${constants.API_HOST}/api/luxury/profile?uid=${openid}`
+      }).then((resp) => {
+        this.showSpinner = false
+        if (resp.statusCode === 200) {
+          const data = resp.data
+          this.profile = data
+        } else {
+          wepy.showToast({
+            title: resp.data.message
+          })
+        }
+        this.$apply()
+      })
+    }
+  }
+</script>

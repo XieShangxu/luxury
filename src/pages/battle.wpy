@@ -1,0 +1,59 @@
+<style lang="less" scoped>
+.loading {
+  height: 800rpx;
+  background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
+  background-size: 64rpx auto;
+}
+.battle-wrapper {
+  padding-top: 400rpx;
+  text-align: center;
+}
+</style>
+
+<template>
+  <view class="container">
+    <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="battle-wrapper">还在开发中，尽请期待</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import constants from '../utils/constants'
+  export default class Battle extends wepy.page {
+    config = {
+      navigationBarTitleText: '对战',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
+    }
+
+    data = {
+      showSpinner: true,
+      questions: []
+    }
+
+    computed = {
+    }
+
+    methods = {
+    }
+
+    onLoad() {
+      // const battleId = 'test'
+      // wepy.request({
+      //   url: `${constants.API_HOST}/api/luxury/battle?id=${battleId}`
+      // }).then((resp) => {
+      //   this.showSpinner = false
+      //   if (resp.statusCode === 200) {
+      //     const data = resp.data
+      //     this.fragments = data
+      //   } else {
+      //     wepy.showToast({
+      //       title: resp.data.message
+      //     })
+      //   }
+      //   this.$apply()
+      // })
+    }
+  }
+</script>

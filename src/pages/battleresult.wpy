@@ -1,0 +1,59 @@
+<style lang="less" scoped>
+.loading {
+  height: 800rpx;
+  background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
+  background-size: 64rpx auto;
+}
+.result-wrapper {
+  padding-top: 400rpx;
+  text-align: center;
+}
+</style>
+
+<template>
+  <view class="container">
+    <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="result-wrapper">还在开发中，尽请期待</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  // import constants from '../utils/constants'
+  export default class BattleResult extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的战绩',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
+    }
+
+    data = {
+      showSpinner: true,
+      battles: []
+    }
+
+    computed = {
+    }
+
+    methods = {
+    }
+
+    onLoad() {
+      // const openid = wepy.getStorageSync('openid')
+      // wepy.request({
+      //   url: `${constants.API_HOST}/api/luxury/battle/result?uid=${openid}`
+      // }).then((resp) => {
+      //   this.showSpinner = false
+      //   if (resp.statusCode === 200) {
+      //     const data = resp.data
+      //     this.battles = data
+      //   } else {
+      //     wepy.showToast({
+      //       title: resp.data.message
+      //     })
+      //   }
+      //   this.$apply()
+      // })
+    }
+  }
+</script>

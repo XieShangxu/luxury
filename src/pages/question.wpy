@@ -314,6 +314,7 @@
         this.selected.push(id)
         this.$apply()
         if (id === this.product.brandId) {
+          this.saveFragment(this.product.id)
           if (this.index === this.products.length - 1) {
             setTimeout(() => {
               this.finished = true
@@ -338,20 +339,43 @@
         }, 1000)
       },
       goHome() {
-        wepy.redirectTo({
-          url: 'index'
-        })
+        const pages = getCurrentPages()
+        const page = pages.length > 1 ? pages[pages.length - 2].route : ''
+        if (page === 'pages/index') {
+          wepy.navigateBack()
+        } else {
+          wepy.redirectTo({
+            url: 'index'
+          })
+        }
       },
       restart() {
         wepy.redirectTo({
           url: 'question'
         })
-      },
-      goFavor() {
-        wepy.redirectTo({
-          url: 'favorite'
-        })
       }
+    }
+
+    saveFragment(id) {
+      const openid = wepy.getStorageSync('openid')
+      wepy.request({
+        method: 'POST',
+        url: `${constants.API_HOST}/api/luxury/fragment`,
+        data: {
+          uid: openid,
+          pid: id
+        }
+      }).then((resp) => {
+        if (resp.statusCode === 200) {
+          const fragmentHint = wepy.getStorageSync('fragmentHint')
+          if (!fragmentHint) {
+            wepy.showToast({
+              title: '获得碎片!'
+            })
+            wepy.setStorageSync('fragmentHint', 1)
+          }
+        }
+      })
     }
 
     onShareAppMessage() {

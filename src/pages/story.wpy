@@ -18,7 +18,7 @@
   font-size: 32rpx;
   text-indent: 64rpx;
   padding: 48rpx;
-  line-height: 1.5;
+  line-height: 1.8;
 }
 image {
   width: 100%;
@@ -118,14 +118,14 @@ video {
       gotoPDP(id) {
         wepy.navigateToMiniProgram({
           appId: 'wxb3959dd9f45a8c2d',
-          path: `pages/detail?productId=${id}&_source_=brandstory`,
+          path: `pages/detail?productId=${id}&_source_=zds_brandstory`,
           version: 'release'
         })
       },
       gotoPLP() {
         wepy.navigateToMiniProgram({
           appId: 'wxb3959dd9f45a8c2d',
-          path: `pages/productlist?gender=women&brand=${this.story.bid}&_source_=brandstory`,
+          path: `pages/productlist?gender=women&brand=${this.story.bid}&_source_=zds_brandstory`,
           version: 'release'
         })
       }

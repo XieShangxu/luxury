@@ -9,7 +9,7 @@ page {
 .action-btn {
   display: block;
   width: 50%;
-  margin: 80rpx auto 0;
+  margin: 0 auto 60rpx;
   padding: 28rpx 0;
   border-radius: 80rpx;
   text-align: center;
@@ -27,14 +27,17 @@ page {
 <template>
   <view class="container">
     <image class="gif-banner" src="http://ff-image.danielxie.cn/simple_logo_dots.gif" />
-    <view class="action-btn start-btn" @tap="gotoQuestionPage">
+    <view class="action-btn start-btn" @tap="gotoPage('question')">
       <image src="http://ff-image.danielxie.cn/icon_play.svg" />开始闯关
     </view>
-    <view class="action-btn favorite-btn" @tap="gotoFavoritePage">
-      <image src="http://ff-image.danielxie.cn/icon_star.svg" />我的收藏
+    <view class="action-btn profile-btn" @tap="gotoPage('battle')">
+      <image src="http://ff-image.danielxie.cn/icon_battle.svg" />发起挑战
     </view>
-    <view class="action-btn story-btn" @tap="gotoBrandStoryPage">
+    <view class="action-btn story-btn" @tap="gotoPage('story')">
       <image src="http://ff-image.danielxie.cn/bookmark.svg" />今日品牌
+    </view>
+    <view class="action-btn profile-btn" @tap="gotoPage('profile')">
+      <image src="http://ff-image.danielxie.cn/icon_profile.svg" />个人主页
     </view>
   </view>
 </template>
@@ -56,19 +59,9 @@ page {
     }
 
     methods = {
-      gotoQuestionPage() {
+      gotoPage(page) {
         wepy.navigateTo({
-          url: 'question'
-        })
-      },
-      gotoFavoritePage() {
-        wepy.navigateTo({
-          url: 'favorite'
-        })
-      },
-      gotoBrandStoryPage() {
-        wepy.navigateTo({
-          url: 'story'
+          url: page
         })
       }
     }

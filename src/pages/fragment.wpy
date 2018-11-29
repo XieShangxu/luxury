@@ -1,0 +1,128 @@
+<style lang="less" scoped>
+.loading {
+  height: 800rpx;
+  background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
+  background-size: 64rpx auto;
+}
+.empty-hint {
+  flex: 1;
+  text-align: center;
+  padding-top: 400rpx
+}
+.play {
+  display: block;
+  width: 50%;
+  margin: 80rpx auto 0;
+  padding: 28rpx 0;
+  border-radius: 80rpx;
+  text-align: center;
+  color: #000;
+  background-color: #fff;
+  box-shadow: 0 0 18rpx #ddd;
+
+  image {
+    width: 40rpx;
+    height: 40rpx;
+    margin-right: 20rpx;
+    vertical-align: -6rpx;
+  }
+}
+.fragment-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+.fragment-item {
+  width: 33.3333%;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+.fragment-img {
+  width: 100%;
+  padding-top: 133.3333%;
+  box-shadow: 0 0 10rpx #ddd;
+  border-radius: 12rpx;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80%;
+}
+.count {
+  display: block;
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #999;
+  text-align: center;
+}
+</style>
+
+<template>
+  <view class="container">
+    <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="fragment-wrapper">
+      <view wx:if="{{!fragments.length}}" class="empty-hint">
+        <text>暂时没有碎片</text>
+        <view class="play" @tap="gotoPlay">
+          <image src="http://ff-image.danielxie.cn/icon_play.svg" />马上去闯关
+        </view>
+      </view>
+      <repeat for="{{fragments}}" key="index" index="index" item="fragment">
+        <view class="fragment-item" @tap="gotoPDP('{{fragment.id}}')">
+          <view class="fragment-img" style="background-image: url({{fragment.imgUrl}});"></view>
+          <text class="count">{{fragment.quantity}} / 30</text>
+        </view>
+      </repeat>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import constants from '../utils/constants'
+  export default class Fragment extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的碎片',
+      navigationBarBackgroundColor: '#000',
+      navigationBarTextStyle: '#fff'
+    }
+
+    data = {
+      showSpinner: true,
+      fragments: []
+    }
+
+    computed = {
+    }
+
+    methods = {
+      gotoPlay() {
+        wepy.navigateTo({
+          url: 'question'
+        })
+      },
+      gotoPDP(id) {
+        wepy.navigateToMiniProgram({
+          appId: 'wxb3959dd9f45a8c2d',
+          path: `pages/detail?productId=${id}&_source_=zds_fragment`,
+          version: 'release'
+        })
+      }
+    }
+
+    onLoad() {
+      const openid = wepy.getStorageSync('openid')
+      wepy.request({
+        url: `${constants.API_HOST}/api/luxury/fragments?uid=${openid}`
+      }).then((resp) => {
+        this.showSpinner = false
+        if (resp.statusCode === 200) {
+          const data = resp.data
+          this.fragments = data
+        } else {
+          wepy.showToast({
+            title: resp.data.message
+          })
+        }
+        this.$apply()
+      })
+    }
+  }
+</script>
