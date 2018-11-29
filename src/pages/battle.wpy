@@ -28,7 +28,7 @@
     }
 
     data = {
-      showSpinner: true,
+      showSpinner: false,
       questions: []
     }
 
