@@ -4,56 +4,259 @@
   background: url('http://ff-image.danielxie.cn/loader.gif') center center no-repeat;
   background-size: 64rpx auto;
 }
-.battle-wrapper {
-  padding-top: 400rpx;
+.competer {
+  position: relative;
+  margin-top: 40rpx;
+  height: 100rpx;
+}
+.fromer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 240rpx;
+  height: 100rpx;
+  border-radius: 0 50rpx 50rpx 0;
+  background: #000;
+  .fromer-avatar {
+    position: absolute;
+    top: 10rpx;
+    right: 10rpx;
+    bottom: 10rpx;
+    width: 64rpx;
+    border: 8rpx solid #fff;
+    border-radius: 50%;
+    background-color: #ddd;
+    background-image: url('http://ff-image.danielxie.cn/logo-luxury.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+  }
+}
+.toer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 240rpx;
+  height: 100rpx;
+  border-radius: 50rpx 0 0 50rpx;
+  background: #000;
+  .toer-avatar {
+    position: absolute;
+    top: 10rpx;
+    left: 10rpx;
+    bottom: 10rpx;
+    width: 64rpx;
+    border: 8rpx solid #fff;
+    border-radius: 50%;
+    background-color: #ddd;
+    background-image: url('http://ff-image.danielxie.cn/logo-luxury.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+  }
+}
+.action-wrapper {
+  margin-top: 120rpx;
+}
+.action-btn {
+  display: block;
+  width: 50%;
+  margin: 0 auto 60rpx;
+  padding: 28rpx 0;
+  border: 4rpx solid #000;
+  border-radius: 80rpx;
   text-align: center;
+  color: #000;
+  line-height: 1.4;
+  background-color: #fff;
+
+  image {
+    width: 40rpx;
+    height: 40rpx;
+    margin-right: 20rpx;
+    vertical-align: -6rpx;
+  }
+}
+.question-wrapper {
+  width: 560rpx;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.question-list {
+  display: flex;
+  width: 1000%;
+  overflow-x: hidden;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.3s;
+  .question-item {
+    flex: 1;
+  }
+  .img-wrapper {
+    position: relative;
+    width: 90%;
+    height: 400rpx;
+    background-position: center;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    margin: 40rpx auto;
+  }
+  .options {
+    width: 100%;
+  }
+  .option-item {
+    width: 75%;
+    text-align: center;
+    padding: 20rpx 0;
+    font-size: 30rpx;
+    margin: 20rpx auto 0;
+    border: 4rpx solid #000;
+    border-radius: 80rpx;
+    &.selected {
+      background: #000;
+      color: #fff;
+    }
+    &.correct {
+      border-color: #00BB29;
+      background: #00BB29;
+      color: #fff;
+    }
+    &.error {
+      border-color: #EF4245;
+      background: #EF4245;
+      color: #fff;
+    }
+  }
+}
+.score-bar {
+  position: fixed;
+  top: 280rpx;
+  width: 16rpx;
+  height: 600rpx;
+  border-radius: 40rpx;
+  background: rgba(0, 0, 0, .05);
+  &.fromer-bar {
+    left: 10rpx;
+  }
+  &.toer-bar {
+    right: 10rpx;
+  }
+  .score {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 0;
+    max-height: 100%;
+    border-radius: 40rpx;
+    background: #000;
+    transition: height .5s;
+  }
 }
 </style>
 
 <template>
   <view class="container">
-    <view wx:if="{{showSpinner}}" class="loading"></view>
-    <view wx:else class="battle-wrapper">还在开发中，尽请期待</view>
+    <!-- <view wx:if="{{showSpinner}}" class="loading"></view>
+    <view wx:else class="battle-wrapper">
+      <view class="competer">
+        <view class="fromer">
+          <view class="nickname">{{battle.}}</view>
+          <view class="fromer-avatar"></view>
+        </view>
+        <view class="toer">
+          <view class="toer-avatar"></view>
+        </view>
+      </view>
+      <view wx:if="{{battle.toer}}" class="action-wrapper">
+        <button class="action-btn" @tap="quitBattle">
+          <image src="http://ff-image.danielxie.cn/icon_quit.svg" />退出挑战
+        </button>
+        <button class="action-btn" open-type="share">
+          <image src="http://ff-image.danielxie.cn/icon_share.svg" />邀请好友
+        </button>
+      </view>
+      <view wx:else class="question-wrapper">
+        <view class="question-list" style="transform: translate3d(-{{index * 10}}%, 0, 0)">
+          <repeat for="{{battle.questions}}" key="key" index="key" item="p">
+            <view class="question-item">
+              <view class="img-wrapper" style="background-image: url({{p.imgUrl}})"></view>
+              <view class="options">
+                <repeat for="{{p.options}}" key="optionkey" index="optionkey" item="item">
+                  <view
+                    class="option-item"
+                    :class="{'selected': selected[index] === item.id, 'correct': selected[index] && item.id === product.brandId, 'error': selected[index] && selected[index] == item.id && item.id !== product.brandId}"
+                    data-bid="{{item.id}}"
+                    @tap="choose">
+                    {{item.name}}
+                  </view>
+                </repeat>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="fromer-bar score-bar">
+          <view class="score" style="height: {{fromScore * 10}}%;"></view>
+        </view>
+        <view class="toer-bar score-bar">
+          <view class="score" style="height: {{toScore * 10}}%;"></view>
+        </view>
+      </view>
+    </view> -->
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
-  // import constants from '../utils/constants'
+  import constants from '../utils/constants'
   export default class Battle extends wepy.page {
     config = {
-      navigationBarTitleText: '对战',
-      navigationBarBackgroundColor: '#000',
-      navigationBarTextStyle: '#fff'
+      navigationBarTitleText: '对战'
     }
 
     data = {
       showSpinner: false,
-      questions: []
+      index: 0,
+      fromScore: 0,
+      toScore: 0,
+      counter: 10,
+      selected: [],
+      battle: {}
     }
 
     computed = {
     }
 
     methods = {
+      quitBattle() {
+        wepy.navigateBack()
+      }
+    }
+
+    onShareAppMessage() {
+      return {
+        title: '就怕你不敢应战！',
+        imageUrl: this.battle.questions[0].imgUrl
+      }
     }
 
     onLoad() {
-      // const battleId = 'test'
-      // wepy.request({
-      //   url: `${constants.API_HOST}/api/luxury/battle?id=${battleId}`
-      // }).then((resp) => {
-      //   this.showSpinner = false
-      //   if (resp.statusCode === 200) {
-      //     const data = resp.data
-      //     this.fragments = data
-      //   } else {
-      //     wepy.showToast({
-      //       title: resp.data.message
-      //     })
-      //   }
-      //   this.$apply()
-      // })
+      const pages = getCurrentPages()
+      const options = pages[pages.length - 1].options
+      const { id } = options
+      wepy.request({
+        url: `${constants.API_HOST}/api/luxury/battle?id=${id}`
+      }).then((resp) => {
+        this.showSpinner = false
+        if (resp.statusCode === 200) {
+          const data = resp.data
+          this.battle = data
+        } else {
+          // wepy.showToast({
+          //   title: resp.data.message
+          // })
+        }
+        this.$apply()
+      })
     }
   }
 </script>

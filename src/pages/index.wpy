@@ -14,6 +14,7 @@ page {
   border-radius: 80rpx;
   text-align: center;
   color: #000;
+  line-height: 1.4;
   background-color: #fff;
 
   image {
@@ -30,26 +31,31 @@ page {
     <view class="action-btn start-btn" @tap="gotoPage('question')">
       <image src="http://ff-image.danielxie.cn/icon_play.svg" />开始闯关
     </view>
-    <view class="action-btn profile-btn" @tap="gotoPage('battle')">
+    <!-- <button class="action-btn profile-btn" open-type="getUserInfo" bindgetuserinfo="inviteBattle">
       <image src="http://ff-image.danielxie.cn/icon_battle.svg" />发起挑战
-    </view>
+    </button> -->
     <view class="action-btn story-btn" @tap="gotoPage('story')">
       <image src="http://ff-image.danielxie.cn/bookmark.svg" />今日品牌
     </view>
     <view class="action-btn profile-btn" @tap="gotoPage('profile')">
-      <image src="http://ff-image.danielxie.cn/icon_profile.svg" />个人主页
+      <image src="http://ff-image.danielxie.cn/icon_profile.svg" />我就是我
+    </view>
+    <view class="action-btn profile-btn" @tap="toFarfetch">
+      <image src="http://ff-image.danielxie.cn/icon_farfetch.svg" />精品商城
     </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import constants from '../utils/constants'
 
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '奢侈品知多少',
       navigationBarBackgroundColor: '#000',
-      navigationBarTextStyle: '#fff'
+      navigationBarTextStyle: '#fff',
+      disableScroll: true
     }
 
     data = {
@@ -62,6 +68,41 @@ page {
       gotoPage(page) {
         wepy.navigateTo({
           url: page
+        })
+      },
+      toFarfetch() {
+        wepy.navigateToMiniProgram({
+          appId: 'wxb3959dd9f45a8c2d',
+          path: 'pages/home?type=women&_mta_ref_id=20190114',
+          version: 'release'
+        })
+      },
+      inviteBattle(resp) {
+        const openid = wepy.getStorageSync('openid')
+        const detail = resp.detail
+        if (detail.errMsg === 'getUserInfo:fail auth deny') {
+          return false
+        }
+        this.$parent.globalData.userInfo = detail.userInfo
+        wepy.request({
+          method: 'post',
+          url: `${constants.API_HOST}/api/luxury/battle`,
+          data: {
+            fromer: openid
+          }
+        }).then((resp) => {
+          this.showSpinner = false
+          if (resp.statusCode === 200) {
+            const battleId = resp.data
+            wepy.navigateTo({
+              url: `battle?id=${battleId}`
+            })
+          } else {
+            wepy.showToast({
+              title: resp.data.message
+            })
+          }
+          this.$apply()
         })
       }
     }

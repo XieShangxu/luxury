@@ -132,9 +132,10 @@ video {
     }
 
     onShareAppMessage() {
+      const image = this.story.description.find((s) => s.type === 'image')
       return {
         title: `${this.story.name}，值得你种草的小众品牌！`,
-        imageUrl: `${this.story.products[0].url}`
+        imageUrl: image.src || ''
       }
     }
 

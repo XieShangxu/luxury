@@ -105,7 +105,8 @@
     config = {
       navigationBarTitleText: '个人主页',
       navigationBarBackgroundColor: '#000',
-      navigationBarTextStyle: '#fff'
+      navigationBarTextStyle: '#fff',
+      disableScroll: true
     }
 
     data = {
@@ -121,7 +122,7 @@
       winrate() {
         const { win, total } = this.profile
         if (win) {
-          return Math.round(win / total * 100) / 100
+          return Math.round(win / total * 100)
         }
         return 0
       }
